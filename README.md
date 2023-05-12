@@ -1,13 +1,13 @@
-# macos-libvirt
+# macos-barebones-vm
 
-Run a lightweight + headless VM on macOS using libvirt and QEMU
+Run a lightweight + headless VM on macOS using QEMU
 
 ## Setup
 
-0. Install prerequisites
+0. Install QEMU
 
 ```
-$ brew install qemu libvirt
+$ brew install qemu
 
 # Disable QEMU security as it's not supported in macOS
 echo 'security_driver = "none"' >> /opt/homebrew/etc/libvirt/qemu.conf
@@ -24,38 +24,20 @@ $ git clone https://github.com/adwinying/macos-libvirt ~/vms
 2. Create virtual disk
 
 ```bash
-$ qemu-img create -f qcow2 workdev.qcow2 64g
+$ qemu-img create -f qcow2 workdev.qcow2 64G
 ```
 
-3. Update configs in XML file as necessary
-
-```xml
-  <memory unit='GiB'>4</memory>
-  ...
-  <vcpu>4</vcpu>
-  ...
-  <devices>
-    <emulator>/path/to/homebrew/bin/qemu-system-aarch64</emulator>
-    ...
-    <disk type='file' device='disk'>
-      <source file='/Users/[user name]/vms/workdev.qcow2' />
-    </disk>
-    <disk type='file' device='disk'>
-      <source file='/path/to/installer.iso' />
-    </disk>
-  </devices>
-```
-
-4. Add domain (VM) to libvirt
+3. Update QEMU command arg if necessary
 
 ```bash
-$ virsh define workdev.xml
+  -drive file=/path/to/qcow2/image
+  -cdrom /path/to/installer.iso
 ```
 
-5. Start VM
+4. Start VM
 
 ```bash
-$ virsh start workdev
+$ ./workdev.sh
 ```
 
 ## Usage
@@ -72,28 +54,7 @@ localhost:5900
 $ ssh -p 2222 [vm user name]@localhost
 ```
 
-## Useful Commands
-
-```bash
-# list all libvirt domains
-$ virsh list -all
-
-# edit domain config
-$ virsh edit [domain name]
-
-# remove domain
-$ virsh undefine [domain name]
-
-# restart domain
-$ virsh reboot [domain name]
-
-# send shutdown signal
-$ virsh shutdown [domain name]
-
-# force shutdown
-$ virsh destroy [domain name]
-```
-
 ## References
-- https://wiki.archlinux.org/title/Libvirt
+- https://wiki.archlinux.org/title/QEMU
 - https://www.naut.ca/blog/2021/12/09/arm64-vm-on-macos-with-libvirt-qemu/
+- https://www.sevarg.net/2021/01/09/arm-mac-mini-and-boinc/
