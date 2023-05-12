@@ -7,7 +7,12 @@ Run a lightweight + headless VM on macOS using libvirt and QEMU
 0. Install prerequisites
 
 ```
-$ brew install libvirt
+$ brew install qemu libvirt
+
+# Disable QEMU security as it's not supported in macOS
+echo 'security_driver = "none"' >> /opt/homebrew/etc/libvirt/qemu.conf
+echo "dynamic_ownership = 0" >> /opt/homebrew/etc/libvirt/qemu.conf
+echo "remember_owner = 0" >> /opt/homebrew/etc/libvirt/qemu.conf
 ```
 
 1. Clone this repo to `~/vms`
